@@ -17,7 +17,7 @@ def main(model,epochs,num_classes):
     #定义优化器和损失函数
     optimizer= torch.optim.Adam(model.parameters(),lr = 0.01,weight_decay=0.001)
     loss_fn = nn.CrossEntropyLoss()
-    
+
 
 
 
