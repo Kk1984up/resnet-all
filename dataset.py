@@ -15,24 +15,24 @@ import matplotlib.pyplot as plt
 
 #train dataset transformation
 train_transformations = transforms.Compose([
-    transforms.Tensor(),
-    transforms.Normalize((0.5,0.5,0.5),(0.5,0.5,0.5)),
     transforms.Resize((224,224)),
     transforms.RandomCrop(32,padding=4),
-    transforms.RandomHorizontalFlip()
+    transforms.RandomHorizontalFlip(),
+    transforms.ToTensor(),
+    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
 ])
 
 test_transformations = transforms.Compose([
-    transforms.Tensor(),
     transforms.Resize((224,224)),
-    transforms.Normalize((0.5,0.5,0.5),(0.5,0.5,0.5))
+    transforms.ToTensor(),
+    transforms.Normalize((0.5,0.5,0.5),(0.5,0.5,0.5)),
 ])
 
 def dataset_path(root):
   train_img_path = os.path.join(root,'train')
   test_img_path = os.path.join(root,'test')
   return train_img_path,test_img_path
-root = 'd:\\github\\resnet_all\\datasets'
+root = 'd:\\github\\resnet_all\\datasets\\horse-human'
 
 train_img_path,test_img_path = dataset_path(root)
 train_img = ImageFolder(
@@ -50,3 +50,7 @@ print(f'show the dataset {train_img.class_to_idx}\n and {train_img.imgs[:2]}')
 
 train_loader = DataLoader(train_img,batch_size=4,shuffle=True)
 test_loader = DataLoader(test_img,batch_size=4,shuffle=False)
+
+if __name__ =="__main__":
+    for img_tensor,labels in train_loader:
+        print(f'input img tensor is {img_tensor} \n and labels is {labels}')
