@@ -32,7 +32,7 @@ def dataset_path(root):
   train_img_path = os.path.join(root,'train')
   test_img_path = os.path.join(root,'test')
   return train_img_path,test_img_path
-root = 'd:\\github\\resnet_all\\datasets\\horse-human'
+root = './datasets/horse-human'
 
 train_img_path,test_img_path = dataset_path(root)
 train_dataset = ImageFolder(
