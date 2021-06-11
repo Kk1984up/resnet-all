@@ -127,6 +127,8 @@ def train(train_loader, model, criterion, optimizer, epoch, args):
     end = time.time()
     global global_step
     for i, (images, target) in enumerate(train_loader):
+        print(f'images is input as :{images}')
+        print(f'target is {target}')
         global_step += 1
         adjust_learning_rate(optimizer, args)
         # measure data loading time
@@ -265,6 +267,10 @@ def accuracy(output, target, topk=(1,)):
             correct_k = correct[:k].reshape(-1).float().sum(0, keepdim=True)
             res.append(correct_k.mul_(100.0 / batch_size))
         return res
+
+
+if __name__ =="__main__":
+    main()
 
 
 
