@@ -46,8 +46,6 @@ parser.add_argument('--resume', default='', type=str, metavar='PATH',
                     help='path to latest checkpoint (default: none)')
 parser.add_argument('-e', '--evaluate', dest='evaluate', action='store_true',
                     help='evaluate model on validation set')
-parser.add_argument('--world_size', default=8, type=int,
-                    help='number of nodes for distributed training')
 parser.add_argument("--local_rank", type=int, default=0)
 parser.add_argument('--seed', default=None, type=int,
                     help='seed for initializing training')
@@ -55,7 +53,7 @@ parser.add_argument("--output", type=str, default="./train_log",
                     help="a folder save training log")
 
 args = parser.parse_args()
-args.step_per_epoch = 1000// (args.world_size * args.batch_size)
+args.step_per_epoch = 1000//64
 torch.cuda.set_device(1)
 device = torch.device("cuda", 1)
 
