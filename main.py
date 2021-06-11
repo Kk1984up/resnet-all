@@ -77,7 +77,7 @@ def main():
         Model = resnet101()
     elif args.model == 'resnet152':
         Model = resnet152()
-    model = Model().to(device)
+    model = Model.to(device)
     # define loss function (criterion) and optimizer
     criterion = nn.CrossEntropyLoss().to(device)
     optimizer = Adam(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
