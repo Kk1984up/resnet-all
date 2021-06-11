@@ -35,22 +35,22 @@ def dataset_path(root):
 root = 'd:\\github\\resnet_all\\datasets\\horse-human'
 
 train_img_path,test_img_path = dataset_path(root)
-train_img = ImageFolder(
+train_dataset = ImageFolder(
     root = train_img_path,
     transform=train_transformations,
 )
-test_img = ImageFolder(
+test_dataset = ImageFolder(
     root = test_img_path,
     transform=test_transformations
 )
 
-print(f'train_dataset classes:{train_img.classes}')
-print(f'train_dataset img numbers:{len(train_img)}')
-print(f'show the dataset {train_img.class_to_idx}\n and {train_img.imgs[:2]}')
+print(f'train_dataset classes:{train_dataset.classes}')
+print(f'train_dataset img numbers:{len(train_dataset)}')
+print(f'show the dataset {train_dataset.class_to_idx}\n and {train_dataset.imgs[:2]}')
 
-train_loader = DataLoader(train_img,batch_size=4,shuffle=True)
-test_loader = DataLoader(test_img,batch_size=4,shuffle=False)
+train_loader = DataLoader(train_dataset,batch_size=64,shuffle=True)
+test_loader = DataLoader(test_dataset,batch_size=64,shuffle=False)
 
 if __name__ =="__main__":
-    for img_tensor,labels in train_loader:
-        print(f'input img tensor is {img_tensor} \n and labels is {labels}')
+    for i,(images,labels) in enumerate(train_loader):
+        print(f'input img tensor is {images.size(0)} \n and labels is {labels}')
