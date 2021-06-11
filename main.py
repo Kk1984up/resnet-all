@@ -81,7 +81,7 @@ def main():
     # define loss function (criterion) and optimizer
     criterion = nn.CrossEntropyLoss().to(device)
     optimizer = Adam(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
-    train_sampler = torch.utils.data.distributed.DistributedSampler(train_dataset)
+    #train_sampler = torch.utils.data.distributed.DistributedSampler(train_dataset)
 
 
     if args.evaluate:
@@ -89,7 +89,7 @@ def main():
         return
 
     for epoch in range(args.start_epoch, args.epochs):
-        train_sampler.set_epoch(epoch)
+#        train_sampler.set_epoch(epoch)
 
         # train for one epoch
         train(train_loader, model, criterion, optimizer, epoch, args)
