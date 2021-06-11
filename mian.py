@@ -23,9 +23,6 @@ from torch.optim import Adam
 from model.resnet_all import resnet101,resnet152
 from torch.autograd import Variable
 
-
-
-
 parser = argparse.ArgumentParser(description='PyTorchTraining')
 parser.add_argument('--model', default= 'resnet101',type = str, metavar='M',
                     help='path to dataset')
@@ -49,8 +46,6 @@ parser.add_argument('--resume', default='', type=str, metavar='PATH',
                     help='path to latest checkpoint (default: none)')
 parser.add_argument('-e', '--evaluate', dest='evaluate', action='store_true',
                     help='evaluate model on validation set')
-parser.add_argument('--pretrained', dest='pretrained', action='store_true',
-                    help='use pre-trained model')
 parser.add_argument('--world_size', default=8, type=int,
                     help='number of nodes for distributed training')
 parser.add_argument("--local_rank", type=int, default=0)
@@ -61,10 +56,8 @@ parser.add_argument("--output", type=str, default="./train_log",
 
 args = parser.parse_args()
 args.step_per_epoch = 1000// (args.world_size * args.batch_size)
-torch.distributed.init_process_group(backend="nccl", world_size=args.world_size)
-local_rank = torch.distributed.get_rank()
-torch.cuda.set_device(local_rank)
-device = torch.device("cuda", local_rank)
+torch.cuda.set_device(1)
+device = torch.device("cuda", 1)
 
 best_acc1 = 0
 global_step = 0
@@ -87,8 +80,6 @@ def main():
     elif args.model == 'resnet152':
         Model = resnet152()
     model = Model().to(device)
-    model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[local_rank], output_device=local_rank)
-
     # define loss function (criterion) and optimizer
     criterion = nn.CrossEntropyLoss().to(device)
     optimizer = Adam(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
