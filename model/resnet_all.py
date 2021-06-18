@@ -170,6 +170,7 @@ class ResNet(nn.Module):
                                        dilate=replace_stride_with_dilation[2])
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc = nn.Linear(512 * block.expansion, num_classes)
+        self.act = nn.Softmax()
 
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
@@ -228,6 +229,7 @@ class ResNet(nn.Module):
         x = self.avgpool(x)
         x = torch.flatten(x, 1)
         x = self.fc(x)
+        x = self.act(x)
 
         return x
 

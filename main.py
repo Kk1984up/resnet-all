@@ -23,9 +23,6 @@ from torch.optim import Adam
 from model.resnet_all import resnet101,resnet152
 from torch.autograd import Variable
 
-
-
-
 parser = argparse.ArgumentParser(description='PyTorchTraining')
 parser.add_argument('--model', default= 'resnet101',type = str, metavar='M',
                     help='path to dataset')
@@ -49,10 +46,6 @@ parser.add_argument('--resume', default='', type=str, metavar='PATH',
                     help='path to latest checkpoint (default: none)')
 parser.add_argument('-e', '--evaluate', dest='evaluate', action='store_true',
                     help='evaluate model on validation set')
-parser.add_argument('--pretrained', dest='pretrained', action='store_true',
-                    help='use pre-trained model')
-parser.add_argument('--world_size', default=8, type=int,
-                    help='number of nodes for distributed training')
 parser.add_argument("--local_rank", type=int, default=0)
 parser.add_argument('--seed', default=None, type=int,
                     help='seed for initializing training')
@@ -60,11 +53,9 @@ parser.add_argument("--output", type=str, default="./train_log",
                     help="a folder save training log")
 
 args = parser.parse_args()
-args.step_per_epoch = 1000// (args.world_size * args.batch_size)
-torch.distributed.init_process_group(backend="nccl", world_size=args.world_size)
-local_rank = torch.distributed.get_rank()
-torch.cuda.set_device(local_rank)
-device = torch.device("cuda", local_rank)
+args.step_per_epoch = 1000//64
+torch.cuda.set_device(1)
+device = torch.device("cuda", 1)
 
 best_acc1 = 0
 global_step = 0
@@ -86,13 +77,11 @@ def main():
         Model = resnet101()
     elif args.model == 'resnet152':
         Model = resnet152()
-    model = Model().to(device)
-    model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[local_rank], output_device=local_rank)
-
+    model = Model.to(device)
     # define loss function (criterion) and optimizer
     criterion = nn.CrossEntropyLoss().to(device)
     optimizer = Adam(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
-    train_sampler = torch.utils.data.distributed.DistributedSampler(train_dataset)
+    #train_sampler = torch.utils.data.distributed.DistributedSampler(train_dataset)
 
 
     if args.evaluate:
@@ -100,7 +89,7 @@ def main():
         return
 
     for epoch in range(args.start_epoch, args.epochs):
-        train_sampler.set_epoch(epoch)
+#        train_sampler.set_epoch(epoch)
 
         # train for one epoch
         train(train_loader, model, criterion, optimizer, epoch, args)
@@ -138,6 +127,8 @@ def train(train_loader, model, criterion, optimizer, epoch, args):
     end = time.time()
     global global_step
     for i, (images, target) in enumerate(train_loader):
+        print(f'images is input as :{images}')
+        print(f'target is {target}')
         global_step += 1
         adjust_learning_rate(optimizer, args)
         # measure data loading time
@@ -206,10 +197,10 @@ def validate(val_loader, model, criterion, args):
 
     return top1.avg, top5.avg
 
-def save_checkpoint(state, is_best, filename='checkpoint.pth.tar'):
+def save_checkpoint(state, is_best, filename='checkpoint.pth'):
     torch.save(state, filename)
     if is_best:
-        shutil.copyfile(filename, 'model_best.pth.tar')
+        shutil.copyfile(filename, 'model_best.pth')
 
 class AverageMeter(object):
     """Computes and stores the average and current value"""
@@ -276,6 +267,10 @@ def accuracy(output, target, topk=(1,)):
             correct_k = correct[:k].reshape(-1).float().sum(0, keepdim=True)
             res.append(correct_k.mul_(100.0 / batch_size))
         return res
+
+
+if __name__ =="__main__":
+    main()
 
 
 
