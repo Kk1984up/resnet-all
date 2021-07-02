@@ -76,7 +76,11 @@ def main():
     if args.model=='resnet101':
         Model = resnet101(num_classes=2)
     elif args.model == 'resnet152':
+<<<<<<< HEAD:main.py
         Model = resnet152(num_classes=2)
+=======
+        Model = resnet152()
+>>>>>>> 344bb33445ec675e63f4c6dd665568c1e2cd1f5f:mian.py
     model = Model.to(device)
     # define loss function (criterion) and optimizer
     criterion = nn.CrossEntropyLoss().to(device)

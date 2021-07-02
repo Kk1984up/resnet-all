@@ -45,7 +45,10 @@ def test(dataloader,model):
 
 			print(f'pred is :{pred} \n and label is {label}')
 			test_loss += loss_fn(pred,label).item()
+<<<<<<< HEAD
 			print(f'')
+=======
+>>>>>>> 344bb33445ec675e63f4c6dd665568c1e2cd1f5f
 			correct+= (pred.argmax(1) ==label).type(torch.float).sum().item()
 		test_loss/=size
 		correct/= size
